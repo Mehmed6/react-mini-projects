@@ -22,6 +22,10 @@ p {
     margin: 20px 0;
 }
 
+h1 {
+    margin-bottom: 5px;
+}
+
 header {
     display: flex;
     justify-content: space-between;
@@ -95,4 +99,27 @@ form button {
     color: #fff;
     background-color: var(--primary);
     cursor: pointer;
+}
+
+.card {
+    display: flex;
+    gap: 10px;
+    border: 1px solid var(--secondary);
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.card img {
+    border-radius: 5px;
+}
+
+.card a {
+    border: 0;
+    padding: 10px;
+    border-radius: 4px;
+    color: #fff;
+    background: var(--primary);
+    cursor: pointer;
+    text-decoration: none;
 }
