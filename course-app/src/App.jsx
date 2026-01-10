@@ -4,7 +4,7 @@ import MainLayout from "./layouts/MainLayout.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import AboutPage from "./pages/AboutPage.jsx";
 import ContactPage from "./pages/help/ContactPage.jsx";
-import CoursesPage from "./pages/CoursesPage.jsx";
+import CoursesPage, {coursesLoader} from "./pages/CoursesPage.jsx";
 import HelpLayout from "./layouts/HelpLayput.jsx";
 import FaqPage from "./pages/help/FaqPage.jsx";
 
@@ -17,7 +17,7 @@ const router = createBrowserRouter([
             {index: true, element: <HomePage/>},
             {path: "home", element: <HomePage/>},
             {path: "about", element: <AboutPage/>},
-            {path: "courses", element: <CoursesPage/>},
+            {path: "courses", element: <CoursesPage/>, loader: coursesLoader},
             {
                 path: "help",
                 element: <HelpLayout/>,
