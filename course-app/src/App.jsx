@@ -7,6 +7,7 @@ import ContactPage from "./pages/help/ContactPage.jsx";
 import CoursesPage, {coursesLoader} from "./pages/CoursesPage.jsx";
 import HelpLayout from "./layouts/HelpLayput.jsx";
 import FaqPage from "./pages/help/FaqPage.jsx";
+import CourseDetailsPage, {courseDetailsLoader} from "./pages/CourseDetailsPage.jsx";
 
 
 const router = createBrowserRouter([
@@ -18,6 +19,7 @@ const router = createBrowserRouter([
             {path: "home", element: <HomePage/>},
             {path: "about", element: <AboutPage/>},
             {path: "courses", element: <CoursesPage/>, loader: coursesLoader},
+            {path: "courses/:id", element: <CourseDetailsPage/>, loader:courseDetailsLoader},
             {
                 path: "help",
                 element: <HelpLayout/>,
