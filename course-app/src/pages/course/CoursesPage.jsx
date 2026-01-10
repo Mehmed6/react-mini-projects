@@ -1,8 +1,19 @@
-import {Link, useLoaderData} from "react-router";
+import {Link, redirect, useLoaderData, useSubmit} from "react-router";
 
 export default function CoursesPage() {
 
     const courses = useLoaderData();
+    const submit = useSubmit();
+
+    const handleDelete = id => {
+        const confirm = window.confirm("Are you sure you want to delete this course?");
+        if (confirm) {
+            submit(null, {
+                method: "DELETE",
+                action: `/courses/${id}/delete`
+            })
+        }
+    }
 
     return (
         <>
@@ -15,6 +26,8 @@ export default function CoursesPage() {
                             <h4>{item.title}</h4>
                             <p>{item.description}</p>
                             <Link to={item.id}>Detay</Link>
+                            <Link to={item.id + "/edit"}>Edit</Link>
+                            <button onClick={() => handleDelete(item.id)}>Delete</button>
                         </div>
                     </div>
                 ))}
@@ -26,4 +39,15 @@ export default function CoursesPage() {
 export async function coursesLoader() {
     const res = await fetch("http://localhost:5000/courses");
     return res.json();
+}
+
+export async function courseDeleteAction({params, request}) {
+    const {id} = params;
+    const response = await fetch(`http://localhost:5000/courses/${id}`, {
+        method: request.method
+    });
+
+    if (response.ok)
+        return redirect("/courses");
+
 }
