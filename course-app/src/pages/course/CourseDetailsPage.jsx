@@ -1,11 +1,11 @@
-import {useLoaderData} from "react-router";
+import {useLoaderData, useRouteLoaderData} from "react-router";
 import {CiUser} from "react-icons/ci";
 import {FcLike} from "react-icons/fc";
 import {FaRegComments} from "react-icons/fa";
 
 export default function CourseDetailsPage() {
 
-    const course = useLoaderData();
+    const course = useRouteLoaderData("course-details");
     return (
         <div className="course-details">
             <h1>{course.title}</h1>
