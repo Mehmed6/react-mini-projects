@@ -1,10 +1,37 @@
-import {Button, Card, CardActionArea, CardActions, CardContent, CardMedia, IconButton, Typography} from "@mui/material";
+import {
+    Button,
+    Card,
+    CardActionArea,
+    CardActions,
+    CardContent,
+    CardMedia,
+    CircularProgress,
+    IconButton,
+    Typography
+} from "@mui/material";
 import {currencyTRY} from "../utils/formats.js";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { Link } from "react-router";
+import {useState} from "react";
+import requests from "../api/apiClient.js";
+import {useCartContext} from "../context/CartContext.jsx";
 
 export default function ProductCard({product}) {
+    const [loading, setLoading] = useState(false);
+    const {setCart} = useCartContext();
+
+    const handleAddItem =  async id => {
+        setLoading(true);
+        try {
+            const response = await requests.cart.addItem(id);
+            setCart(response);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
+    }
     return (
         <Card>
             <CardActionArea component={Link} to={`/products/${product.id}`}>
@@ -25,7 +52,7 @@ export default function ProductCard({product}) {
                 <IconButton>
                     <FavoriteBorderIcon/>
                 </IconButton>
-                <Button>Sepete Ekle</Button>
+                <Button onClick={() => handleAddItem(product.id)}>{loading ? <CircularProgress size={20} /> : "Sepete Ekle"}</Button>
             </CardActions>
         </Card>
     )
