@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import ProductList from "../components/ProductList.jsx";
 import Loading from "../components/Loading.jsx";
+import requests from "../api/apiClient.js";
 
 export default function ProductsPage() {
 
@@ -10,8 +11,8 @@ export default function ProductsPage() {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const result = await fetch("http://localhost:5000/products/");
-                setProducts(await result.json());
+                const result = await requests.products.list();
+                setProducts(result);
 
             } catch (error) {
                 console.log(error.message);
