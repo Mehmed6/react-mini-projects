@@ -2,6 +2,7 @@ import {AppBar, Badge, Box, Button, IconButton, Toolbar} from "@mui/material";
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import {NavLink, Link} from "react-router";
+import {useCartContext} from "../context/CartContext.jsx";
 
 const links = [
     {title: "Home", to: "/" },
@@ -15,6 +16,8 @@ const authLinks = [
 
 export default function Navbar() {
 
+    const {cart} = useCartContext();
+    const totalItems = cart?.cartItems.reduce((total, item) => total + item.product.quantity, 0);
     return (
         <AppBar position="static" sx={{backgroundColor: "secondary.light"}}>
             <Toolbar>
@@ -23,19 +26,19 @@ export default function Navbar() {
                         <StorefrontIcon />
                     </IconButton>
                     {links.map(link => (
-                        <Button component={NavLink} to={link.to} color="inherit">
+                        <Button component={NavLink} to={link.to} color="inherit" key={link.title}>
                             {link.title}
                         </Button>
                     ))}
                 </Box>
                 <Box sx={{display: "flex", alignItems: "center"}}>
                     <IconButton color="inherit" component={Link} to="/cart">
-                        <Badge badgeContent="4" color="error">
+                        <Badge badgeContent={totalItems} color="error">
                             <ShoppingCartIcon />
                         </Badge>
                     </IconButton>
                     {authLinks.map(link => (
-                        <Button component={NavLink} to={link.to} color="inherit">
+                        <Button component={NavLink} to={link.to} color="inherit" key={link.title}>
                             {link.title}
                         </Button>
                     ))}
