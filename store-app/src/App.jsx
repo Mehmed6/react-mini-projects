@@ -3,17 +3,18 @@ import {RouterProvider} from "react-router";
 import {router} from "./routes/index.jsx";
 import {useEffect} from "react";
 import requests from "./api/apiClient.js";
-import {useCartContext} from "./context/CartContext.jsx";
+import {useDispatch} from "react-redux";
+import {setCart} from "./pages/cart/cartSlice.js";
 
 function App() {
 
-    const {setCart} = useCartContext();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         requests.cart.get()
-            .then(cart => setCart(cart))
+            .then(cart => dispatch(setCart(cart)))
             .catch(err => console.log(err))
-    }, []);
+    }, [dispatch]);
 
   return <RouterProvider router={router}/>
 }
