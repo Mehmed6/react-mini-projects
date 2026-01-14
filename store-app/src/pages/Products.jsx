@@ -1,30 +1,20 @@
 import {useEffect, useState} from "react";
 import ProductList from "../components/ProductList.jsx";
 import Loading from "../components/Loading.jsx";
-import requests from "../api/apiClient.js";
+import {useDispatch, useSelector} from "react-redux";
+import {fetchProducts, selectAllProducts} from "./catalog/catalogSlice.js";
 
 export default function ProductsPage() {
 
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const {status, isLoaded} = useSelector(state => state.catalogStore)
+    const dispatch = useDispatch();
+    const products = useSelector(selectAllProducts);
 
     useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const result = await requests.products.list();
-                setProducts(result);
+        if (!isLoaded) dispatch(fetchProducts());
+    }, [dispatch, isLoaded]);
 
-            } catch (error) {
-                console.log(error.message);
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        fetchProducts();
-    }, []);
-
-    if (loading) return <Loading/>;
+    if (status === "pendingFetchProducts") return <Loading/>;
 
     return <ProductList products={products} />;
 }
