@@ -1,11 +1,43 @@
 import axios from "axios";
 import {toast} from "react-toastify";
 import {router} from "../routes/index.jsx";
+//import {store} from "../pages/store/store.js";
 
 axios.defaults.baseURL = "http://localhost:5000/";
 axios.defaults.withCredentials = true;
 
+
+let token = null;
+export const setAuthToken = (newToken) => { token = newToken;};
+
+axios.interceptors.request.use(request => {
+    //const token = store.getState().account.user?.token;
+    if (token)
+        request.headers.Authorization = `Bearer ${token}`;
+
+    return request;
+})
+
+let onHttpError = null;
+export const setOnHttpError = (handler) => {
+    onHttpError = handler;
+}
+
 axios.interceptors.response.use(
+    response => response,
+    error => {
+        const resp = error.response;
+        const normalized = {
+            status: resp?.status ?? 0,
+            data: resp?.data,
+            message: resp?.data?.message || error.message || "Something went wrong"
+        };
+        if (onHttpError) onHttpError(normalized);
+        return Promise.reject(normalized);
+    }
+)
+
+/*axios.interceptors.response.use(
     response => {
         return response;
     },
@@ -40,7 +72,7 @@ axios.interceptors.response.use(
         }
         return Promise.reject(error);
     }
-)
+) */
 
 
 const methods = {
@@ -59,6 +91,18 @@ const cart = {
     get: () => methods.get("carts"),
     addItem: (productId, quantity = 1) => methods.post(`carts?productId=${productId}&quantity=${quantity}`, {}),
     deleteItem: (productId, quantity = 1) => methods.delete(`carts?productId=${productId}&quantity=${quantity}`),
+};
+
+const account = {
+    login: formData => methods.post("users/login", formData),
+    register: formData => methods.post("users/register", formData),
+    getUser: () => methods.get("users/getUser"),
+}
+
+const orders = {
+    getOrders: () => methods.get("orders"),
+    getOrderById: id => methods.get(`orders/${id}`),
+    createOrder: formData => methods.post("orders", formData)
 }
 
 const errors = {
@@ -73,6 +117,8 @@ const requests = {
     products,
     errors,
     cart,
+    account,
+    orders
 };
 
 export default requests;
