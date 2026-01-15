@@ -1,5 +1,6 @@
 
 import {
+    Box,
     Button, CircularProgress,
     Paper,
     Table,
@@ -16,7 +17,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import {currencyTRY} from "../../utils/formats.js";
 import {useDispatch, useSelector} from "react-redux";
 import {addItemToCart, deleteItemFromCart} from "./cartSlice.js";
-
+import {Link} from "react-router";
 
 export default function CartPage() {
     const dispatch = useDispatch();
@@ -28,89 +29,96 @@ export default function CartPage() {
 
     if (!cart || cart.cartItems.length === 0) return <Typography variant="h3" component="h1">Sepetinizde Ürün Yok</Typography>
     return (
-        <TableContainer component={Paper}>
-            <Table sx={{minWidth: 650}}>
-                <TableHead>
-                    <TableRow>
-                        <TableCell sx={{width: 100}}></TableCell>
-                        <TableCell>Ürün</TableCell>
-                        <TableCell sx={{width: 120}}>Fiyat</TableCell>
-                        <TableCell sx={{width: 170}}>Adet</TableCell>
-                        <TableCell sx={{width: 120}}>Toplam</TableCell>
-                        <TableCell sx={{width: 50}}></TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {cart.cartItems.map(item => (
-                        <TableRow key={item.id}>
-                            <TableCell>
-                                <img src={`http://localhost:5000/images/${item.product.image}` }
-                                     style={{width: "100%"}} />
+        <>
+            <TableContainer component={Paper}>
+                <Table sx={{minWidth: 650}}>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell sx={{width: 100}}></TableCell>
+                            <TableCell>Ürün</TableCell>
+                            <TableCell sx={{width: 120}}>Fiyat</TableCell>
+                            <TableCell sx={{width: 170}}>Adet</TableCell>
+                            <TableCell sx={{width: 120}}>Toplam</TableCell>
+                            <TableCell sx={{width: 50}}></TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {cart.cartItems.map(item => (
+                            <TableRow key={item.id}>
+                                <TableCell>
+                                    <img src={`http://localhost:5000/images/${item.product.image}` }
+                                         style={{width: "100%"}} />
+                                </TableCell>
+                                <TableCell>{item.product.title}</TableCell>
+                                <TableCell>{currencyTRY.format(item.product.price)}</TableCell>
+                                <TableCell>
+                                    <Button onClick={() => dispatch(deleteItemFromCart({
+                                        productId: item.product.productId,
+                                        quantity: 1,
+                                        key: "single"
+                                    }))}>
+                                        { status === "pendingDeleteItem" + item.product.productId + "single" ? (
+                                                <CircularProgress size={20}/>
+                                            ) :
+                                            <RemoveCircleOutlineIcon/>
+                                        }
+                                    </Button>
+                                    {item.product.quantity}
+                                    <Button onClick={() => dispatch(addItemToCart({productId: item.product.productId}))}>
+                                        {status === "pendingAddItem" + item.product.productId ? (
+                                                <CircularProgress size={20}/>
+                                            ) :
+                                            <AddCircleOutlineIcon/>
+                                        }
+                                    </Button>
+                                </TableCell>
+                                <TableCell>{currencyTRY.format(item.product.price * item.product.quantity)}</TableCell>
+                                <TableCell>
+                                    <Button onClick={() => dispatch(deleteItemFromCart({
+                                        productId: item.product.productId,
+                                        quantity: item.product.quantity,
+                                        key: "all"
+                                    }))}>
+                                        {status === "pendingDeleteItem" + item.product.productId + "all" ? (
+                                            <CircularProgress size={20} color="error"/>
+                                        ) : <DeleteIcon color="error"/>
+                                        }
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                        <TableRow>
+                            <TableCell align="right" colSpan={5}>
+                                Ara Toplam:
                             </TableCell>
-                            <TableCell>{item.product.title}</TableCell>
-                            <TableCell>{currencyTRY.format(item.product.price)}</TableCell>
                             <TableCell>
-                                <Button onClick={() => dispatch(deleteItemFromCart({
-                                    productId: item.product.productId,
-                                    quantity: 1,
-                                    key: "single"
-                                }))}>
-                                    { status === "pendingDeleteItem" + item.product.productId + "single" ? (
-                                        <CircularProgress size={20}/>
-                                        ) :
-                                        <RemoveCircleOutlineIcon/>
-                                    }
-                                </Button>
-                                {item.product.quantity}
-                                <Button onClick={() => dispatch(addItemToCart({productId: item.product.productId}))}>
-                                    {status === "pendingAddItem" + item.product.productId ? (
-                                        <CircularProgress size={20}/>
-                                    ) :
-                                        <AddCircleOutlineIcon/>
-                                    }
-                                </Button>
-                            </TableCell>
-                            <TableCell>{currencyTRY.format(item.product.price * item.product.quantity)}</TableCell>
-                            <TableCell>
-                                <Button onClick={() => dispatch(deleteItemFromCart({
-                                    productId: item.product.productId,
-                                    quantity: item.product.quantity,
-                                    key: "all"
-                                }))}>
-                                    {status === "pendingDeleteItem" + item.product.productId + "all" ? (
-                                        <CircularProgress size={20} color="error"/>
-                                    ) : <DeleteIcon color="error"/>
-                                    }
-                                </Button>
+                                {currencyTRY.format(subTotal)}
                             </TableCell>
                         </TableRow>
-                    ))}
-                    <TableRow>
-                        <TableCell align="right" colSpan={5}>
-                            Ara Toplam:
-                        </TableCell>
-                        <TableCell>
-                            {currencyTRY.format(subTotal)}
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell align="right" colSpan={5}>
-                            Vergi
-                        </TableCell>
-                        <TableCell align="right" colSpan={5}>
-                            {currencyTRY.format(tax)}
-                        </TableCell>
-                    </TableRow>
-                    <TableRow>
-                        <TableCell align="right" colSpan={5}>
-                            Toplam
-                        </TableCell>
-                        <TableCell align="right" colSpan={5}>
-                            {currencyTRY.format(total)}
-                        </TableCell>
-                    </TableRow>
-                </TableBody>
-            </Table>
-        </TableContainer>
+                        <TableRow>
+                            <TableCell align="right" colSpan={5}>
+                                Vergi
+                            </TableCell>
+                            <TableCell align="right" colSpan={5}>
+                                {currencyTRY.format(tax)}
+                            </TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell align="right" colSpan={5}>
+                                Toplam
+                            </TableCell>
+                            <TableCell align="right" colSpan={5}>
+                                {currencyTRY.format(total)}
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </TableContainer>
+            <Box sx={{display:"flex", justifyContent: "space-between", mt: 3}}>
+                <Button component={Link} to="/products" variant="contained">Continue Shopping</Button>
+                <Button component={Link} to="/checkout" variant="contained" color="secondary">Checkout</Button>
+            </Box>
+        </>
+
     );
 }
