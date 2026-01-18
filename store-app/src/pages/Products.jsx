@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import ProductList from "../components/ProductList.jsx";
 import Loading from "../components/Loading.jsx";
 import {useDispatch, useSelector} from "react-redux";
