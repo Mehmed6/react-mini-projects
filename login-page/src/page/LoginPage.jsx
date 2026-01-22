@@ -5,6 +5,10 @@ import {z} from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Checkbox} from "@/components/ui/checkbox.jsx";
+import requests from "@/api/apiClient.js";
+import {toast} from "react-toastify";
+import {useNavigate} from "react-router";
+import {useAuthContext} from "@/context/AuthContext.jsx";
 
 const loginSchema = z.object({
     email: z.string().min(1, "Email is required").pipe(z.email("Invalid email address")),
@@ -22,10 +26,23 @@ export function LoginPage() {
         formState: {errors}
     } = useForm({resolver: zodResolver(loginSchema), defaultValues: {rememberMe: false}});
 
+    const navigate = useNavigate();
+    const {refreshUser} = useAuthContext();
+
     const rememberMe = watch("rememberMe");
 
-    const submittedData = data => {
-        console.log(data); // backend operation can be performed here
+    const submittedData = async data => {
+        try {
+            await requests.account.login(data);
+            await refreshUser()
+            navigate("/");
+            toast.success("Logged in successfully");
+
+        } catch (error) {
+            toast.error(error?.response?.data?.message || "Login failed");
+            return;
+        }
+
         reset()
     }
 
