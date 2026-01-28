@@ -1,8 +1,9 @@
+import RegisterPage from "./page/RegisterPage.jsx";
 
 function App() {
 
   return (
-    <h1>App</h1>
+    <RegisterPage />
   )
 }
 
