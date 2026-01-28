@@ -22,7 +22,8 @@ const registerSchema = z.object({
     firstName: z.string().min(1, "First Name is required"),
     lastName: z.string().min(1, "Last Name is required"),
     email: z.string().min(1, "Email is required").pipe(z.email("Invalid email address")),
-    password: z.string().min(6, "Password must be at least 6 characters long"),
+    password: z.string().min(6, "Password must be at least 6 characters long").regex(/[A-Z]/, "Must contain uppercase")
+        .regex(/[0-9]/, "Must contain number"),
     rePassword: z.string().min(6, "Re-Password must be at least 6 characters long"),
     country: z.string().min(1, "Country is required"),
     city: z.string().min(1, "City is required"),
