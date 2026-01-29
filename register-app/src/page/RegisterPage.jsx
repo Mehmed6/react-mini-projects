@@ -5,9 +5,8 @@ import {
     Container,
     Grid,
     IconButton,
-    InputAdornment, InputLabel,
+    InputAdornment,
     Paper,
-    TextareaAutosize,
     TextField,
     Typography
 } from "@mui/material";
@@ -17,6 +16,8 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "zod";
+import {requests} from "../api/apiClient.js";
+import {toast} from "react-toastify";
 
 const registerSchema = z.object({
     firstName: z.string().min(1, "First Name is required"),
@@ -27,7 +28,7 @@ const registerSchema = z.object({
     rePassword: z.string().min(6, "Re-Password must be at least 6 characters long"),
     country: z.string().min(1, "Country is required"),
     city: z.string().min(1, "City is required"),
-    address: z.string().min(1, "Address is required"),
+    address: z.string().optional(),
 })
     .refine(data => data.password === data.rePassword, {
         message: "Passwords do not match",
@@ -47,16 +48,24 @@ const RegisterPage = () => {
         setShowRePassword(!showRePassword);
     }
 
-    const handleSubmitClick = (data) => {
+    const handleSubmitClick = async (data) => {
         console.log(data)
-        // Here you can handle the registration logic, e.g., send data to the server
-        reset();
+        try {
+            await requests.account.register(data);
+            toast.success("Registered successfully");
+            reset();
+        } catch (error) {
+            toast.error(error?.response?.data?.message || "Registration failed");
+
+        }
+
     }
 
     return (
         <>
             <Container className="container" maxWidth="md">
-                <Paper component="form" elevation={3}  className="paper" onSubmit={handleSubmit(handleSubmitClick)}>
+                <Paper component="form" elevation={3} noValidate
+                       className="paper" onSubmit={handleSubmit(handleSubmitClick)}>
                     <Typography component="h1" variant="h4" className="title" color="secondary">
                         <AccountCircle sx={{ fontSize:"50px" }} />
                         <span >Register</span>
@@ -172,13 +181,15 @@ const RegisterPage = () => {
                             />
                         </Grid>
                         <Grid size={{md:8, sm:12}}>
-                            <InputLabel sx={{marginBottom:"5px", fontSize:"20px"}}>
-                                <span>Address</span>
-                            </InputLabel>
-                            <TextareaAutosize
+                            <TextField
                                 {...register("address")}
-                                minRows={6}
-                                style={{width:"100%", paddingTop:"10px", paddingLeft:"10px", fontSize:"14px"}}
+                                label="Address"
+                                multiline
+                                minRows={2}
+                                maxRows={5}
+                                required={false}
+                                fullWidth
+                                color="secondary"
                             />
                         </Grid>
                     </Grid>

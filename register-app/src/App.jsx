@@ -1,9 +1,14 @@
 import RegisterPage from "./page/RegisterPage.jsx";
+import {ToastContainer} from "react-toastify";
 
 function App() {
 
   return (
-    <RegisterPage />
+      <>
+          <ToastContainer  autoClose={2000} />
+          <RegisterPage />
+      </>
+
   )
 }
 
